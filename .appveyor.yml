@@ -44,5 +44,6 @@ build_script:
   - cmake --build build
           --config %CONFIGURATION%
           -- %BUILDFLAGS%
+  - bash -c "./custom.sh build_fuffa"
 
 deploy: off
