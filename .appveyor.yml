@@ -39,7 +39,7 @@ before_build:
 
 build_script:
   - cmake -H. -Bbuild
-          -G"%GENERATOR%"
+          -G"%CMAKE_GENERATOR%"
           -DCMAKE_BUILD_TYPE=%CONFIGURATION%
   - cmake --build build
           --config %CONFIGURATION%
