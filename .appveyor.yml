@@ -38,12 +38,20 @@ before_build:
   - cmake --version
 
 build_script:
-  - cmake -H. -Bbuild
+  # Test bare
+  - cd %APPVEYOR_BUILD_FOLDER%\chapter-11\recipe-02\cxx-example
+  - cmake -H. -Bbuild_bare
           -G"%CMAKE_GENERATOR%"
           -DCMAKE_BUILD_TYPE=%CONFIGURATION%
   - cmake --build build
           --config %CONFIGURATION%
           -- %BUILDFLAGS%
-  - bash -c "./custom.sh build_fuffa"
+  # Test wrapped in custom.sh
+  - bash -c "./custom.sh build_custom"
+  # Test wrapped in collect_tests.py
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - bash -c "pipenv lock"
+  - bash -c "pipenv install"
+  - bash -c "pipenv run python testing/collect_tests.py 'chapter-11/recipe-02'"
 
 deploy: off
