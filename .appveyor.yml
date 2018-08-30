@@ -1,0 +1,48 @@
+version: 'build-{build}-{branch}'
+
+platform: x64
+
+configuration:
+  - Release
+
+build:
+  parallel: true
+
+image:
+  - Visual Studio 2017
+
+environment:
+  SHELL: "windows"
+  CTEST_OUTPUT_ON_FAILURE: "1"
+  matrix:
+    - CMAKE_GENERATOR: "MSYS Makefiles"
+      BUILDFLAGS: "VERBOSE=1"
+    - CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
+      BUILDFLAGS: "/verbosity:normal"
+
+matrix:
+  fast_finish: true
+
+init:
+  - set PATH=C:\msys64\MINGW64\bin;C:\msys64\usr\bin;%PATH%
+  - set PATH=C:\Python37-x64;C:\Python37-x64\Scripts;%PATH%
+  # Remove Python 2.7 from path
+  - set PATH=%PATH:C:\Python27;=%
+  - set PATH=%PATH:C:\Python27\Scripts;=%
+
+install:
+  - python -m pip install pipenv
+
+before_build:
+  - python --version
+  - cmake --version
+
+build_script:
+  - cmake -H. -Bbuild
+          -G"%GENERATOR%"
+          -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+  - cmake --build build
+          --config %CONFIGURATION%
+          -- %BUILDFLAGS%
+
+deploy: off
